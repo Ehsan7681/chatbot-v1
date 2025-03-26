@@ -10,13 +10,13 @@
     <meta name="description" content="چت با هوش مصنوعی - چت بات هوشمند با قابلیت اتصال به OpenRouter">
     <meta name="apple-mobile-web-app-title" content="چت بات هوشمند">
     <title>چت بات هوش مصنوعی</title>
-    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
-    <link rel="apple-touch-icon" href="assets/images/logo-192.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+    <link rel="manifest" href="./manifest.json">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="fix-scroll.css">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./fix-scroll.css">
 </head>
 <body class="light-mode">
     <div class="floating-button theme-toggle">
@@ -159,14 +159,14 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script src="encryption.js"></script>
-    <script src="storage.js"></script>
-    <script src="script.js"></script>
+    <script src="./encryption.js"></script>
+    <script src="./storage.js"></script>
+    <script src="./script.js"></script>
     <script>
         // کد راه‌اندازی سرویس ورکر برای PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
+                navigator.serviceWorker.register('./service-worker.js')
                     .then(reg => console.log('Service Worker registered'))
                     .catch(err => console.error('Service Worker registration failed:', err));
             });

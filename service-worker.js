@@ -3,18 +3,18 @@ const CACHE_NAME = 'chatbot-cache-v1';
 
 // فایل‌هایی که باید در کش ذخیره شوند
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/fix-scroll.css',
-  '/script.js',
-  '/storage.js',
-  '/encryption.js',
-  '/manifest.json',
-  '/assets/images/logo.png',
-  '/assets/images/logo-192.png',
-  '/assets/images/logo-512.png',
-  '/assets/images/favicon.ico',
+  './',
+  './index.html',
+  './styles.css',
+  './fix-scroll.css',
+  './script.js',
+  './storage.js',
+  './encryption.js',
+  './manifest.json',
+  './assets/images/logo.png',
+  './assets/images/logo-192.png',
+  './assets/images/logo-512.png',
+  './assets/images/favicon.ico',
   'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js'
@@ -84,24 +84,24 @@ self.addEventListener('fetch', (event) => {
           .catch((error) => {
             console.log('[ServiceWorker] Fetch failed; returning offline page instead.', error);
             // در صورت خطا در شبکه، صفحه آفلاین نمایش داده شود
-            return caches.match('/index.html');
+            return caches.match('./index.html');
           });
       })
   );
 });
 
-// نمایش پیام‌هایتوش (در صورت نیاز)
+// نمایش پیام‌های پوش (در صورت نیاز)
 self.addEventListener('push', (event) => {
   if (event.data) {
     const pushData = JSON.parse(event.data.text());
     const options = {
       body: pushData.body || 'پیام جدید',
-      icon: '/assets/images/logo-192.png',
-      badge: '/assets/images/logo-96.png',
+      icon: './assets/images/logo-192.png',
+      badge: './assets/images/logo-96.png',
       dir: 'rtl',
       vibrate: [100, 50, 100],
       data: {
-        url: pushData.url || '/'
+        url: pushData.url || './'
       }
     };
     
@@ -115,6 +115,6 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
+    clients.openWindow(event.notification.data.url || './')
   );
 }); 

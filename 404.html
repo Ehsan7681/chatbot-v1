@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه یافت نشد | چت بات هوش مصنوعی</title>
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #c0c0c0;
+            --text-color-light: #333;
+            --text-color-dark: #ffffff;
+            --background-light: #f8f9fa;
+            --background-dark: #1a1a1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        
+        body {
+            background: var(--background-light);
+            color: var(--text-color-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #e6e6e6 0%, #f5f5f5 100%);
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 60px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* اسکریپت برای ریدایرکت به صفحه اصلی */
+        .countdown {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">
+            <i class="fas fa-robot"></i>
+        </div>
+        <h1>صفحه مورد نظر یافت نشد!</h1>
+        <p>متأسفانه صفحه‌ای که به دنبال آن هستید وجود ندارد. ممکن است آدرس را اشتباه وارد کرده باشید یا صفحه منتقل شده باشد.</p>
+        <p>تا <span id="countdown" class="countdown">5</span> ثانیه دیگر به صفحه اصلی منتقل می‌شوید.</p>
+        <a href="./index.html" class="btn">برگشت به صفحه اصلی</a>
+    </div>
+
+    <script>
+        // شمارش معکوس
+        let seconds = 5;
+        const countdownElement = document.getElementById('countdown');
+        
+        const countdown = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = seconds;
+            
+            if (seconds <= 0) {
+                clearInterval(countdown);
+                window.location.href = './index.html';
+            }
+        }, 1000);
+        
+        // بررسی و ریدایرکت در مسیرهای GitHub Pages
+        (function() {
+            const path = window.location.pathname;
+            const href = window.location.href;
+            
+            // اگر مسیر شامل مسیرهای نامعتبر مانند /404.html یا /undefined است
+            if (path.includes('/404.html') || path.includes('/undefined')) {
+                // ریدایرکت به صفحه اصلی
+                setTimeout(() => {
+                    window.location.href = href.substring(0, href.lastIndexOf('/')) + '/index.html';
+                }, 5000);
+            }
+        })();
+    </script>
+</body>
+</html> 
