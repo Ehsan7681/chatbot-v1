@@ -786,128 +786,120 @@ textarea::placeholder {
 }
 
 @media (max-width: 768px) {
-    body {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
+    .sidebar {
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 10px;
+        max-height: 0;
         overflow: hidden;
-        /* PWA-like styles for mobile */
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-        touch-action: manipulation;
-        overscroll-behavior: none;
-        -webkit-overflow-scrolling: touch;
-        user-select: none; /* تجربه اپلیکیشن‌مانند */
-    }
-    
-    /* تقلید از اپلیکیشن موبایل: استایل‌ها و انیمیشن‌های مشابه اپلیکیشن‌های موبایل */
-    .container {
-        padding: 3px;
-        overscroll-behavior: none;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* استایل المان‌ها شبیه اپلیکیشن‌های موبایل */
-    .message {
-        padding: 8px 12px;
-        max-width: 85%;
-        border-radius: 18px; /* گرد‌تر برای ظاهر اپلیکیشن */
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        transform: scale(0.98); /* استایل ظریف‌تر */
-        transition: transform 0.2s ease;
-    }
-    
-    .message.user {
-        background: rgba(220, 220, 220, 0.95); /* کمی متفاوت برای ظاهر بهتر روی موبایل */
-    }
-    
-    .dark-mode .message.user {
-        background: rgba(60, 60, 60, 0.95);
-    }
-    
-    /* انیمیشن‌های واکنشی شبیه اپلیکیشن‌های موبایل */
-    .send-btn:active {
-        transform: scale(0.9);
-    }
-    
-    textarea:focus {
-        transform: translateY(-1px);
-    }
-    
-    .sidebar-toggle:active, .settings-btn-fixed:active {
-        transform: scale(0.9);
-    }
-    
-    /* استایل اسکرول مخصوص موبایل */
-    ::-webkit-scrollbar {
-        width: 3px;
-    }
-    
-    /* اضافه کردن انیمیشن bounce برای ظاهر طبیعی‌تر */
-    @keyframes appBounce {
-        0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-        40% {transform: translateY(-10px);}
-        60% {transform: translateY(-5px);}
-    }
-    
-    /* اضافه کردن افکت ripple برای دکمه‌ها */
-    .send-btn, .new-chat-btn, .chat-item, .sidebar-toggle, .settings-btn-fixed {
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .send-btn::after, .new-chat-btn::after, .chat-item::after, .sidebar-toggle::after, .settings-btn-fixed::after {
-        content: '';
-        position: absolute;
-        background: rgba(255, 255, 255, 0.3);
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        transform: scale(0);
-        top: 50%;
-        left: 50%;
-        transition: transform 0.3s ease-out;
-        pointer-events: none;
-        transform-origin: center;
         opacity: 0;
+        transition: max-height 0.5s ease, opacity 0.5s ease, margin-bottom 0.5s ease;
+        padding: 0;
+        border: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1500;
+        background: var(--glass-background-light);
+        backdrop-filter: blur(var(--blur-amount));
     }
     
-    .send-btn:active::after, .new-chat-btn:active::after, .chat-item:active::after, .sidebar-toggle:active::after, .settings-btn-fixed:active::after {
-        transform: scale(2);
+    .dark-mode .sidebar {
+        background: var(--glass-background-dark);
+    }
+    
+    .sidebar.active {
+        max-height: 85vh;
         opacity: 1;
-        transition: 0s;
-    }
-    
-    .dark-mode .send-btn::after, .dark-mode .new-chat-btn::after, .dark-mode .chat-item::after, 
-    .dark-mode .sidebar-toggle::after, .dark-mode .settings-btn-fixed::after {
-        background: rgba(255, 255, 255, 0.15);
+        margin-bottom: 15px;
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* اضافه کردن استایل برای لودینگ مشابه اپلیکیشن موبایل */
-    @keyframes appLoading {
-        0% {transform: rotate(0deg);}
-        100% {transform: rotate(360deg);}
+    .main-content {
+        height: 100vh;
+        z-index: 1;
+    }
+
+    .header {
+        padding: 3px 5px;
+        margin-bottom: 3px;
     }
     
-    .loading-indicator {
-        width: 24px;
-        height: 24px;
-        border: 3px solid rgba(192, 192, 192, 0.3);
+    .logo {
+        justify-content: center;
+    }
+    
+    .logo img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .logo h1 {
+        font-size: 1.1rem;
+    }
+
+    .chat-container {
+        padding: 3px;
+        max-height: calc(100vh - 50px);
+    }
+    
+    .messages {
+        max-height: calc(100% - 60px);
+    }
+    
+    .input-area {
+        padding: 5px;
+        margin-top: 3px;
+        max-height: 55px;
+    }
+    
+    textarea {
+        padding: 8px;
+        min-height: 36px;
+    }
+    
+    .send-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+        max-height: 85vh;
+    }
+    
+    .settings-btn-fixed {
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .sidebar-toggle {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        border-top-color: var(--primary-color);
-        animation: appLoading 1s infinite linear;
-        margin: 10px auto;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--text-color-light);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        z-index: 2000;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
     }
     
-    /* تنظیمات برای وقتی کاربر از Home Screen اپلیکیشن را باز می‌کند */
-    @media (display-mode: standalone), (display-mode: minimal-ui) {
-        body {
-            background-color: var(--background-light);
-        }
-        
-        .dark-mode {
-            background-color: var(--background-dark);
-        }
+    .dark-mode .sidebar-toggle {
+        background: rgba(30, 30, 30, 0.95);
+        color: var(--text-color-dark);
     }
 }
 
@@ -1229,4 +1221,61 @@ textarea::placeholder {
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
+}
+
+/* دکمه تاریک/روشن - برای همه سایزها */
+.floating-button.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    z-index: 2500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.dark-mode .floating-button.theme-toggle {
+    background: var(--primary-color);
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.floating-button.theme-toggle:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .floating-button.theme-toggle:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+.floating-button.theme-toggle .fa-moon,
+.floating-button.theme-toggle .fa-sun {
+    position: absolute;
+    transition: opacity 0.3s, transform 0.5s;
+}
+
+.floating-button.theme-toggle .fa-sun {
+    opacity: 0;
+    transform: rotate(180deg);
+}
+
+.dark-mode .floating-button.theme-toggle .fa-moon {
+    opacity: 0;
+    transform: rotate(-180deg);
+}
+
+.dark-mode .floating-button.theme-toggle .fa-sun {
+    opacity: 1;
+    transform: rotate(0);
 } 

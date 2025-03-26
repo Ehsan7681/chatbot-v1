@@ -46,7 +46,13 @@ const dom = {
 };
 
 // مقداردهی اولیه
-function init() {
+async function init() {
+    // بررسی حالت موبایل و بستن تاریخچه
+    checkMobileView();
+    
+    // بارگذاری تنظیمات از storage
+    loadSettings();
+    
     // بارگذاری کلید API
     const apiKey = Storage.getApiKey();
     if (apiKey) {
@@ -112,6 +118,18 @@ function init() {
     setupAutoResize();
 }
 
+// بررسی حالت موبایل و بستن تاریخچه
+function checkMobileView() {
+    // بررسی اینکه آیا در حالت موبایل هستیم
+    if (window.innerWidth <= 768) {
+        // بستن تاریخچه در حالت موبایل
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            sidebar.classList.remove('active');
+        }
+    }
+}
+
 // تنظیم رویدادها
 function setupEventListeners() {
     // رویداد جستجوی مدل
@@ -127,6 +145,12 @@ function setupEventListeners() {
         creativity = value;
         dom.creativityValue.textContent = value.toFixed(1);
     });
+    
+    // اضافه کردن event listener برای دکمه تاریخچه
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
 }
 
 // فیلتر کردن مدل‌ها بر اساس عبارت جستجو
@@ -773,5 +797,41 @@ window.addEventListener('resize', () => {
     }
 });
 
-// شروع برنامه
-init(); 
+// نمایش یا مخفی کردن تاریخچه
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('active');
+}
+
+// تنظیم حالت شب و روز
+function setupThemeToggle() {
+    const themeToggle = document.querySelector('.theme-toggle');
+    const moonIcon = themeToggle.querySelector('.fa-moon');
+    const sunIcon = themeToggle.querySelector('.fa-sun');
+    
+    // بررسی حالت ذخیره شده و اعمال آن
+    const isDarkMode = Storage.getTheme() === 'dark';
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        updateThemeColor(); // آپدیت رنگ تم در status bar
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        
+        // ذخیره حالت جدید
+        const newTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+        Storage.saveTheme(newTheme);
+        
+        updateThemeColor(); // آپدیت رنگ تم در status bar
+    });
+}
+
+// اجرای تابع init در هنگام بارگذاری صفحه
+window.addEventListener('load', () => {
+    init();
+    setupThemeToggle();
+});
+
+// اضافه کردن event listener برای تغییر سایز پنجره
+window.addEventListener('resize', checkMobileView); 
