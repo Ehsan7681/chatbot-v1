@@ -1,0 +1,39 @@
+{
+  "name": "چت بات هوش مصنوعی",
+  "short_name": "چت بات",
+  "description": "چت بات هوشمند با قابلیت اتصال به OpenRouter",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "assets/images/logo-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/logo-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "prefer_related_applications": false,
+  "dir": "rtl",
+  "lang": "fa",
+  "categories": ["productivity", "utilities"],
+  "display_override": ["window-controls-overlay"],
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "چت جدید",
+      "short_name": "جدید",
+      "description": "شروع یک چت جدید",
+      "url": "/?action=new_chat",
+      "icons": [{ "src": "assets/images/logo-96.png", "sizes": "96x96" }]
+    }
+  ]
+} 
