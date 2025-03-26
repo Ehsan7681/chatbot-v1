@@ -30,8 +30,7 @@ const dom = {
     sendButton: document.querySelector('.send-btn'),
     chatHistory: document.querySelector('.chat-history'),
     newChatButton: document.querySelector('.new-chat-btn'),
-    statusIndicator: document.querySelector('.status-indicator'),
-    statusText: document.querySelector('.status-text'),
+    statusIndicator: document.getElementById('status-indicator'),
     themeToggle: document.querySelector('.theme-toggle'),
     settingsModal: document.getElementById('settings-modal'),
     saveSettingsButton: document.getElementById('save-settings'),
@@ -234,7 +233,7 @@ async function checkConnection() {
 // بروزرسانی وضعیت اتصال در رابط کاربری
 function updateConnectionStatus(connected, message) {
     dom.statusIndicator.className = `status-indicator ${connected ? 'online' : 'offline'}`;
-    dom.statusText.textContent = message;
+    dom.settingsButton.setAttribute('title', message);
 }
 
 // پر کردن لیست انتخاب مدل‌ها
@@ -696,12 +695,8 @@ dom.themeToggle.addEventListener('click', () => {
 });
 
 // باز کردن تنظیمات با کلیک روی دکمه تنظیمات
-dom.settingsButton.addEventListener('click', () => {
-    showSettingsModal();
-});
-
-// باز کردن تنظیمات با کلیک روی وضعیت اتصال
-document.querySelector('.connection-status').addEventListener('click', () => {
+const settingsBtn = document.getElementById('settings-btn');
+settingsBtn.addEventListener('click', () => {
     showSettingsModal();
 });
 
