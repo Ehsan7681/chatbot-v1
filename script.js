@@ -748,5 +748,35 @@ dom.chatSearch.addEventListener('input', () => {
     loadChatHistory();
 });
 
+// رویداد کلیک دکمه تغییر وضعیت سایدبار
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebar = document.querySelector('.sidebar');
+
+sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+});
+
+// بستن سایدبار با کلیک خارج از آن
+document.addEventListener('click', (e) => {
+    if (sidebar.classList.contains('active') && 
+        !sidebar.contains(e.target) && 
+        e.target !== sidebarToggle && 
+        !sidebarToggle.contains(e.target)) {
+        sidebar.classList.remove('active');
+    }
+});
+
+// جلوگیری از بسته شدن سایدبار با کلیک داخل آن
+sidebar.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+// تشخیص تغییر اندازه صفحه
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+    }
+});
+
 // شروع برنامه
 init(); 
