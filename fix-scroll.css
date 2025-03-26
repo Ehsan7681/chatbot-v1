@@ -5,6 +5,10 @@ html, body {
   width: 100vw;
   margin: 0;
   padding: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   overflow: hidden;
   position: fixed;
   touch-action: manipulation;
@@ -18,23 +22,43 @@ html, body {
   transform: translateZ(0px);
 }
 
-/* اطمینان از عملکرد درست در iOS */
+/* بهبود یافته برای iOS */
 @supports (-webkit-touch-callout: none) {
-  body, html {
+  html, body {
     height: -webkit-fill-available;
+  }
+  
+  /* رفع مشکل نوار وضعیت در iOS */
+  body.ios-device {
+    padding-top: 40px; /* مقدار پیش‌فرض برای دستگاه‌های بدون notch */
+  }
+  
+  /* اصلاح موقعیت دکمه‌ها در حالت تمام صفحه iOS */
+  .floating-button.theme-toggle {
+    bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+  
+  .settings-btn-fixed {
+    top: calc(10px + env(safe-area-inset-top));
+    right: calc(10px + env(safe-area-inset-right));
+  }
+  
+  .sidebar-toggle {
+    top: calc(10px + env(safe-area-inset-top));
+    left: calc(10px + env(safe-area-inset-left));
   }
 }
 
 /* رفع اسکرول در کانتینر اصلی */
 .container {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: env(safe-area-inset-top);
+  left: env(safe-area-inset-left);
+  right: env(safe-area-inset-right);
+  bottom: env(safe-area-inset-bottom);
   overflow: hidden;
-  height: 100%;
-  width: 100%;
+  height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
   display: flex;
 }
 
@@ -50,19 +74,9 @@ textarea:focus, button:focus, a:focus, input:focus {
   outline: none;
 }
 
-/* بهینه‌سازی برای نمایش PWA */
-@media (display-mode: standalone), (display-mode: fullscreen) {
-  body {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-  
-  .settings-btn-fixed {
-    top: calc(10px + env(safe-area-inset-top));
-    right: calc(10px + env(safe-area-inset-right));
-  }
+/* نگهداری z-index بالا برای دکمه تاریک/روشن */
+.floating-button.theme-toggle {
+  z-index: 3000 !important;
 }
 
 body * {

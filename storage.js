@@ -263,16 +263,16 @@ const Storage = {
     },
     
     /**
-     * ذخیره وضعیت تم
-     * @param {string} theme - نام تم (light یا dark)
+     * ذخیره تم (روشن یا تاریک)
+     * @param {string} theme - نوع تم ('light' یا 'dark')
      */
     saveTheme: function(theme) {
         localStorage.setItem(this.KEYS.THEME, theme);
     },
     
     /**
-     * بازیابی وضعیت تم
-     * @returns {string} نام تم (پیش‌فرض: light)
+     * بازیابی تم
+     * @returns {string} نوع تم ('light' یا 'dark')
      */
     getTheme: function() {
         return localStorage.getItem(this.KEYS.THEME) || 'light';

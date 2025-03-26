@@ -1223,59 +1223,62 @@ textarea::placeholder {
     font-size: 14px;
 }
 
-/* دکمه تاریک/روشن - برای همه سایزها */
-.floating-button.theme-toggle {
+/* استایل‌های جدید دکمه تاریک/روشن */
+.theme-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: var(--primary-color);
-    color: white;
+    background: #c0c0c0;
+    color: #333;
+    border: none;
+    cursor: pointer;
+    z-index: 3000;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.theme-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.theme-btn:active {
+    transform: scale(0.95);
+}
+
+.dark-mode .theme-btn {
+    background: #808080;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.theme-btn .dark-icon,
+.theme-btn .light-icon {
     font-size: 20px;
-    z-index: 2500;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    border: none;
-}
-
-.dark-mode .floating-button.theme-toggle {
-    background: var(--primary-color);
-    color: #333;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-.floating-button.theme-toggle:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.dark-mode .floating-button.theme-toggle:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
-}
-
-.floating-button.theme-toggle .fa-moon,
-.floating-button.theme-toggle .fa-sun {
     position: absolute;
-    transition: opacity 0.3s, transform 0.5s;
+    transition: opacity 0.3s ease;
 }
 
-.floating-button.theme-toggle .fa-sun {
-    opacity: 0;
-    transform: rotate(180deg);
-}
-
-.dark-mode .floating-button.theme-toggle .fa-moon {
-    opacity: 0;
-    transform: rotate(-180deg);
-}
-
-.dark-mode .floating-button.theme-toggle .fa-sun {
+/* حالت پیش‌فرض (روشن) */
+.theme-btn .dark-icon {
     opacity: 1;
-    transform: rotate(0);
+}
+
+.theme-btn .light-icon {
+    opacity: 0;
+}
+
+/* حالت تاریک */
+.dark-mode .theme-btn .dark-icon {
+    opacity: 0;
+}
+
+.dark-mode .theme-btn .light-icon {
+    opacity: 1;
 } 

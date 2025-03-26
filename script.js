@@ -12,6 +12,8 @@ let autoResizeObserver = null;
 let typingEffect = null;
 let creativity = 0.7; // مقدار پیش‌فرض
 let typingSpeed = 'medium'; // مقدار پیش‌فرض
+let userScrolled = false; // متغیر برای تشخیص اسکرول کاربر
+let isNearBottom = true; // آیا کاربر نزدیک انتهای صفحه است
 
 // سرعت‌های تایپ (بر حسب میلی‌ثانیه بین هر حرف)
 const TYPING_SPEEDS = {
@@ -31,7 +33,7 @@ const dom = {
     chatHistory: document.querySelector('.chat-history'),
     newChatButton: document.querySelector('.new-chat-btn'),
     statusIndicator: document.getElementById('status-indicator'),
-    themeToggle: document.querySelector('.theme-toggle'),
+    themeBtn: document.getElementById('theme-btn'),
     settingsModal: document.getElementById('settings-modal'),
     saveSettingsButton: document.getElementById('save-settings'),
     closeModalButton: document.querySelector('.close-modal'),
@@ -116,6 +118,12 @@ async function init() {
     
     // تنظیم observer برای تغییر اندازه خودکار textarea
     setupAutoResize();
+    
+    // اضافه کردن event listener برای اسکرول
+    setupScrollListener();
+    
+    // تنظیم اولیه تم
+    setupThemeToggle();
 }
 
 // بررسی حالت موبایل و بستن تاریخچه
@@ -369,6 +377,10 @@ function loadChat(chatId) {
     // نمایش پیام‌ها
     dom.messagesContainer.innerHTML = '';
     
+    // ریست کردن وضعیت اسکرول
+    userScrolled = false;
+    isNearBottom = true;
+    
     if (chat.messages && chat.messages.length > 0) {
         chat.messages.forEach(message => {
             addMessageToUI(message, false); // false: بدون افکت تایپ
@@ -376,7 +388,7 @@ function loadChat(chatId) {
         
         // اسکرول به پایین
         setTimeout(() => {
-            dom.messagesContainer.scrollTop = dom.messagesContainer.scrollHeight;
+            scrollToBottom(true);
         }, 100);
     } else {
         // اگر پیامی نیست، پیام خوش‌آمدگویی نمایش داده شود
@@ -385,6 +397,21 @@ function loadChat(chatId) {
             content: 'به چت بات هوش مصنوعی خوش آمدید. لطفاً یک مدل را انتخاب کنید و پیام خود را بنویسید.'
         };
         addMessageToUI(welcomeMessage);
+    }
+}
+
+// بررسی اینکه آیا در انتهای چت هستیم
+function checkIfAtBottom() {
+    const messagesContainer = dom.messagesContainer;
+    const scrollPosition = messagesContainer.scrollTop + messagesContainer.clientHeight;
+    const scrollHeight = messagesContainer.scrollHeight;
+    const scrollThreshold = 100; // آستانه 100 پیکسل تا انتها
+    
+    isNearBottom = (scrollHeight - scrollPosition) < scrollThreshold;
+    
+    // اگر به انتهای چت نزدیک هستیم، اسکرول خودکار را فعال کنیم
+    if (isNearBottom) {
+        userScrolled = false;
     }
 }
 
@@ -401,6 +428,9 @@ function addMessageToUI(message, withTypingEffect = true) {
         contentElement.className += ' typing';
         messageElement.appendChild(contentElement);
         dom.messagesContainer.appendChild(messageElement);
+        
+        // اسکرول به پایین قبل از شروع تایپ
+        scrollToBottom(true);
         
         // شروع افکت تایپ
         startTypingEffect(contentElement, message.content);
@@ -429,6 +459,9 @@ function addMessageToUI(message, withTypingEffect = true) {
         }
         
         dom.messagesContainer.appendChild(messageElement);
+        
+        // اسکرول به پایین پس از افزودن پیام
+        scrollToBottom(true);
     }
 }
 
@@ -438,6 +471,9 @@ function startTypingEffect(element, text) {
     if (typingEffect) {
         clearInterval(typingEffect);
     }
+    
+    // قبل از شروع تایپ، بررسی کنیم آیا در انتهای چت هستیم
+    checkIfAtBottom();
     
     // ابتدا محتوای متن را به HTML تبدیل می‌کنیم
     const formattedText = formatMessage(text);
@@ -458,6 +494,11 @@ function startTypingEffect(element, text) {
             htmlContent += plainText.charAt(index);
             element.textContent = htmlContent;
             index++;
+            
+            // هر 10 کاراکتر یک بار اسکرول کنیم تا خیلی متواتر نباشد
+            if (index % 10 === 0) {
+                scrollToBottom();
+            }
         } else {
             clearInterval(typingEffect);
             typingEffect = null;
@@ -474,6 +515,14 @@ function startTypingEffect(element, text) {
             timeElement.className = 'message-time';
             timeElement.textContent = formatTime(timestamp);
             messageElement.appendChild(timeElement);
+            
+            // اسکرول به پایین پس از اتمام تایپ با تأخیر کوتاه
+            setTimeout(() => {
+                scrollToBottom(true);
+                
+                // بعد از اتمام کامل، وضعیت اسکرول کاربر را به شرایط جدید تنظیم می‌کنیم
+                checkIfAtBottom();
+            }, 100);
         }
     }, speed);
 }
@@ -585,13 +634,17 @@ function hideSettingsModal() {
 function setTheme(theme) {
     if (theme === 'dark') {
         document.body.classList.add('dark-mode');
-        dom.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
     } else {
         document.body.classList.remove('dark-mode');
-        dom.themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
     }
     
+    // ذخیره تم
     Storage.saveTheme(theme);
+    
+    // آپدیت رنگ تم در status bar اگر تابع وجود داشته باشد
+    if (typeof updateThemeColor === 'function') {
+        updateThemeColor();
+    }
 }
 
 // تبدیل متن به HTML با پشتیبانی از markdown ساده
@@ -668,6 +721,9 @@ dom.messageForm.addEventListener('submit', async (event) => {
     dom.userInput.value = '';
     adjustTextareaHeight();
     
+    // ریست کردن وضعیت اسکرول کاربر قبل از شروع پاسخ جدید
+    userScrolled = false;
+    
     // ارسال پیام به API
     const assistantMessage = await sendMessage(userMessage);
     
@@ -709,13 +765,6 @@ dom.modelSelect.addEventListener('change', (event) => {
 // دکمه چت جدید
 dom.newChatButton.addEventListener('click', () => {
     createNewChat();
-});
-
-// دکمه تغییر تم
-dom.themeToggle.addEventListener('click', () => {
-    const currentTheme = Storage.getTheme();
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
 });
 
 // باز کردن تنظیمات با کلیک روی دکمه تنظیمات
@@ -803,35 +852,123 @@ function toggleSidebar() {
     sidebar.classList.toggle('active');
 }
 
-// تنظیم حالت شب و روز
+// اضافه کردن رویداد کلیک برای دکمه تغییر تم
 function setupThemeToggle() {
-    const themeToggle = document.querySelector('.theme-toggle');
-    const moonIcon = themeToggle.querySelector('.fa-moon');
-    const sunIcon = themeToggle.querySelector('.fa-sun');
-    
-    // بررسی حالت ذخیره شده و اعمال آن
-    const isDarkMode = Storage.getTheme() === 'dark';
-    if (isDarkMode) {
-        document.body.classList.add('dark-mode');
-        updateThemeColor(); // آپدیت رنگ تم در status bar
+    const themeBtn = dom.themeBtn;
+    if (!themeBtn) {
+        console.error('دکمه تغییر تم یافت نشد');
+        return;
     }
     
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        
-        // ذخیره حالت جدید
-        const newTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-        Storage.saveTheme(newTheme);
-        
-        updateThemeColor(); // آپدیت رنگ تم در status bar
+    // اعمال تم ذخیره شده
+    const savedTheme = Storage.getTheme() || 'light';
+    setTheme(savedTheme);
+    
+    // رویداد کلیک دکمه تم
+    themeBtn.addEventListener('click', function() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const newTheme = isDarkMode ? 'light' : 'dark';
+        setTheme(newTheme);
     });
 }
 
 // اجرای تابع init در هنگام بارگذاری صفحه
 window.addEventListener('load', () => {
+    // تشخیص دستگاه‌های iOS
+    detectiOSDevice();
+    
+    // اجرای تابع init
     init();
-    setupThemeToggle();
 });
 
+// تشخیص دستگاه‌های iOS
+function detectiOSDevice() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                 
+    if (isIOS) {
+        document.body.classList.add('ios-device');
+        console.log('دستگاه iOS تشخیص داده شد');
+        
+        // برای رفع مشکل نوار وضعیت در iOS
+        if (window.navigator.standalone) {
+            document.body.classList.add('ios-standalone');
+            console.log('حالت standalone iOS تشخیص داده شد');
+        }
+    }
+}
+
 // اضافه کردن event listener برای تغییر سایز پنجره
-window.addEventListener('resize', checkMobileView); 
+window.addEventListener('resize', checkMobileView);
+
+// اضافه کردن event listener برای اسکرول
+function setupScrollListener() {
+    const messagesContainer = dom.messagesContainer;
+    let scrollTimeout = null;
+    
+    // تشخیص اسکرول کاربر
+    messagesContainer.addEventListener('scroll', function() {
+        // محاسبه فاصله از انتهای اسکرول
+        const scrollPosition = messagesContainer.scrollTop + messagesContainer.clientHeight;
+        const scrollHeight = messagesContainer.scrollHeight;
+        const scrollThreshold = 100; // آستانه 100 پیکسل تا انتها
+        
+        isNearBottom = (scrollHeight - scrollPosition) < scrollThreshold;
+        
+        // اگر هنگام تایپ افکت هستیم، تشخیص اسکرول کاربر
+        if (typingEffect) {
+            userScrolled = true;
+            
+            // اگر دوباره به انتهای چت رسید، اسکرول خودکار را فعال کنیم
+            if (isNearBottom) {
+                userScrolled = false;
+            }
+        }
+        
+        // شبیه‌سازی رویداد scrollend با استفاده از setTimeout برای سازگاری با همه مرورگرها
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            // محاسبه مجدد فاصله از انتهای اسکرول
+            const scrollPosition = messagesContainer.scrollTop + messagesContainer.clientHeight;
+            const scrollHeight = messagesContainer.scrollHeight;
+            
+            isNearBottom = (scrollHeight - scrollPosition) < scrollThreshold;
+            
+            // اگر به انتهای چت نزدیک شد، اسکرول خودکار را فعال کنیم
+            if (isNearBottom) {
+                userScrolled = false;
+            }
+        }, 300);
+    });
+    
+    // برای مرورگرهای مدرن که از scrollend پشتیبانی می‌کنند
+    if ('onscrollend' in window) {
+        messagesContainer.addEventListener('scrollend', function() {
+            // محاسبه فاصله از انتهای اسکرول
+            const scrollPosition = messagesContainer.scrollTop + messagesContainer.clientHeight;
+            const scrollHeight = messagesContainer.scrollHeight;
+            const scrollThreshold = 100; // آستانه 100 پیکسل تا انتها
+            
+            isNearBottom = (scrollHeight - scrollPosition) < scrollThreshold;
+            
+            // اگر به انتهای چت نزدیک شد، اسکرول خودکار را فعال کنیم
+            if (isNearBottom) {
+                userScrolled = false;
+            }
+        });
+    }
+}
+
+// اسکرول به انتهای پیام‌ها
+function scrollToBottom(force = false) {
+    // اگر کاربر اسکرول نکرده یا force برابر true باشد
+    if (!userScrolled || force) {
+        const messagesContainer = dom.messagesContainer;
+        
+        // اسکرول نرم به پایین
+        messagesContainer.scrollTo({
+            top: messagesContainer.scrollHeight,
+            behavior: force ? 'auto' : 'smooth'
+        });
+    }
+} 

@@ -19,10 +19,11 @@
     <link rel="stylesheet" href="./fix-scroll.css">
 </head>
 <body class="light-mode">
-    <div class="floating-button theme-toggle">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
-    </div>
+    <!-- دکمه جدید تاریک/روشن با ساختار ساده -->
+    <button type="button" class="theme-btn" id="theme-btn" aria-label="تغییر حالت تاریک/روشن">
+        <i class="fas fa-moon dark-icon"></i>
+        <i class="fas fa-sun light-icon"></i>
+    </button>
     
     <div class="settings-btn-fixed" id="settings-btn">
         <i class="fas fa-cog"></i>
@@ -175,8 +176,16 @@
         // تغییر رنگ تم در نوار وضعیت موبایل
         function updateThemeColor() {
             const isDarkMode = document.body.classList.contains('dark-mode');
-            document.getElementById('theme-color').setAttribute('content', 
-                isDarkMode ? '#1a1a1a' : '#ffffff');
+            const themeColorMeta = document.getElementById('theme-color');
+            if (themeColorMeta) {
+                themeColorMeta.setAttribute('content', isDarkMode ? '#1a1a1a' : '#ffffff');
+            }
+            
+            // تغییر رنگ نوار وضعیت برای iOS
+            if (document.querySelector('body.ios-device')) {
+                document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+                    .setAttribute('content', isDarkMode ? 'black' : 'black-translucent');
+            }
         }
         
         // نمایش پیام افزودن به صفحه اصلی
@@ -207,8 +216,7 @@
             localStorage.setItem('pwa-dismissed', 'true');
         });
         
-        // آپدیت رنگ تم در هنگام تغییر
-        document.querySelector('.theme-toggle').addEventListener('click', updateThemeColor);
+        // آپدیت اولیه رنگ تم
         updateThemeColor();
     </script>
 </body>
